@@ -21,6 +21,7 @@ private:
 	std::string name;
 	std::vector <std::string> type;
 	int hp;
+	int maxHp;
 	int attack;
 	int spAttack;
 	int defense;
@@ -53,8 +54,9 @@ public:
 	int getDefense();
 	int getSpDefense();
 	int getSpeed();
+	int getMaxHp();
 	std::string getStatus();
-	std::vector <Move> getMoves();
+	std::vector <Move>& getMoves();
 
 	//Pokemon& operator= (const Pokemon&);
 };

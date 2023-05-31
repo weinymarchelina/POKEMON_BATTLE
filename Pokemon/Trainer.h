@@ -26,6 +26,6 @@ public:
 	void setPokemon(std::vector <Pokemon>);
 	void setItem(std::vector <Item>);
 
-	std::vector <Pokemon> getPokemon();
-	std::vector <Item> getItem();
+	std::vector <Pokemon>& getPokemon();
+	std::vector <Item>& getItem();
 };

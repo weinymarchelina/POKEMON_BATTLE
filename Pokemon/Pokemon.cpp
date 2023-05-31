@@ -18,6 +18,7 @@ Pokemon::Pokemon()
 	this->name = "NONE";
 	this->type.clear();
 	this->hp = 0;
+	this->maxHp = 0;
 	this->attack = 0;
 	this->spAttack = 0;
 	this->defense = 0;
@@ -32,6 +33,7 @@ Pokemon::Pokemon(std::string name, std::vector <std::string> type, int hp, int a
 	this->name = name;
 	this->type = type;
 	this->hp = hp;
+	this->maxHp = hp;
 	this->attack = attack;
 	this->spAttack = spAttack;
 	this->defense = defense;
@@ -46,6 +48,7 @@ Pokemon::Pokemon(std::string name, std::vector <std::string> type, int hp, int a
 	this->name = name;
 	this->type = type;
 	this->hp = hp;
+	this->maxHp = hp;
 	this->attack = attack;
 	this->spAttack = spAttack;
 	this->defense = defense;
@@ -150,7 +153,11 @@ std::string Pokemon::getStatus()
 	return this->status;
 }
 
-std::vector <Move> Pokemon::getMoves()
+std::vector <Move>& Pokemon::getMoves()
 {
 	return this->moves;
+}
+
+int Pokemon::getMaxHp() {
+	return this->maxHp;
 }

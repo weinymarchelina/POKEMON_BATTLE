@@ -17,13 +17,15 @@ Item::Item()
 	this->name = "NONE";
 	this->boost = 0;
 	this->boostType = "HP";
+	this->isUsed = false;
 }
 
-Item::Item(std::string name, int, std::string boostType)
+Item::Item(std::string name, int boost, std::string boostType)
 {
 	this->name = name;
 	this->boost = boost;
 	this->boostType = boostType;
+	this->isUsed = false;
 }
 
 void Item::setName(std::string name)
@@ -41,6 +43,10 @@ void Item::setBoostType(std::string boostType)
 	this->boostType = boostType;
 }
 
+void Item::setIsUsed(bool isUsed) {
+	this->isUsed = isUsed;
+}
+
 std::string Item::getName()
 {
 	return this->name;
@@ -54,4 +60,8 @@ int Item::getBoost()
 std::string Item::getBoostType()
 {
 	return this->boostType;
+}
+
+bool Item::getIsUsed() {
+	return this->isUsed;
 }

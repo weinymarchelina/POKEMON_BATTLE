@@ -19,6 +19,8 @@ private:
 	std::string name;
 	int boost;
 	std::string boostType;
+	bool isUsed;
+
 public:
 	Item();
 	Item(std::string, int, std::string);
@@ -26,8 +28,10 @@ public:
 	void setName(std::string);
 	void setBoost(int);
 	void setBoostType(std::string);
+	void setIsUsed(bool);
 
 	std::string getName();
 	int getBoost();
 	std::string getBoostType();
+	bool getIsUsed();
 };

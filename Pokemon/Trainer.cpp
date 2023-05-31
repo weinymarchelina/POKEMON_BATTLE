@@ -34,12 +34,12 @@ void Trainer::setItem(std::vector <Item> item)
 	this->item = item;
 }
 
-std::vector <Pokemon> Trainer::getPokemon()
+std::vector <Pokemon>& Trainer::getPokemon()
 {
 	return this->pokemon;
 }
 
-std::vector <Item> Trainer::getItem()
+std::vector <Item>& Trainer::getItem()
 {
 	return this->item;
 }
