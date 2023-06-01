@@ -40,7 +40,7 @@ std::vector<std::vector<double>> effectivenessChart = {
  {1.0,  0.5,  1.0,  1.0,  1.0,  1.0,  2.0,  0.5,  1.0,  1.0,  1.0,  1.0,  1.0,  1.0,  2.0,  2.0,  0.5,  1.0}
 };
 
-int roundCount = 1;
+int turnCounter = 1;
 bool isTestMode = false;
 bool isGameOver = false;
 bool isPlayerWin = false;
@@ -272,16 +272,16 @@ int main()
 
 	//
 	while (!isGameOver && !iFile.eof()) {
-		std::cout << "\n\nTurn " << roundCount << std::endl;
+		// std::cout << "\n\nTurn " << turnCounter << std::endl;
 
 		//
 		iFile >> command;
 
-		std::cout << "--- Reading command: " << command << std::endl;
-		std::cout << "--- Current Pokemon: " << std::endl;
-		printStatus();
-		printCheck();
-		std::cout << "======================" << std::endl;
+		// std::cout << "--- Reading command: " << command << std::endl;
+		// std::cout << "--- Current Pokemon: " << std::endl;
+		// printStatus();
+		// printCheck();
+		// std::cout << "======================" << std::endl;
 
 		//
 		isTurnFinished = false;
@@ -289,15 +289,15 @@ int main()
 		//
 		if (command == "Battle") {
 			handleBattle(iFile, false);
-			roundCount++;
+			turnCounter++;
 		}
 		else if (command == "Bag") {
 			handleBag(iFile);
-			roundCount++;
+			turnCounter++;
 		}
 		else if (command == "Pokemon") {
 			handleSwap(iFile, true);
-			roundCount++;
+			turnCounter++;
 		}
 		else if (command == "Status") {
 			printStatus();
@@ -403,9 +403,6 @@ void handleBattle(std::ifstream& iFile, bool isSingleEnemyAttack) {
 
 
 	// ============================= JUDGE POKEMON SPEED =============================
-	Pokemon dummyPokemon1;
-	Pokemon dummyPokemon2;
-
 	Pokemon* firstActPokemon = nullptr;
 	Pokemon* secondActPokemon = nullptr;
 
@@ -426,7 +423,7 @@ void handleBattle(std::ifstream& iFile, bool isSingleEnemyAttack) {
 	}
 
 
-	if (!isSingleEnemyAttack && playerPokemonSpeed > enemyPokemonSpeed) {
+	if (!isSingleEnemyAttack && playerPokemonSpeed >= enemyPokemonSpeed) {
 		firstActPokemon = currentPlayerPokemon;
 		secondActPokemon = currentEnemyPokemon;
 		firstActMove = playerMove;
@@ -455,13 +452,17 @@ void handleBattle(std::ifstream& iFile, bool isSingleEnemyAttack) {
 	isPlayerTurn = !isPlayerTurn;
 
 	if (isSingleEnemyAttack || isTurnFinished) {
-		checkHandleConditional(iFile);
+		if (!isGameOver) {
+			checkHandleConditional(iFile);
+		}
+
+
 		isTurnFinished = true;
 
 		return;
 	}
 
-	if (!checkHandleParalyzed(*secondActPokemon)) {
+	if (!checkHandleParalyzed(*secondActPokemon) && !isTurnFinished) {
 		handleAttack(*secondActPokemon, *secondActMove, *firstActPokemon);
 
 		if (isPlayerTurn) {
@@ -478,20 +479,19 @@ void handleBattle(std::ifstream& iFile, bool isSingleEnemyAttack) {
 }
 
 void handleSwap(std::ifstream& iFile, bool isSwapCommand) {
-	std::cout << "Select the next pokemon: " << std::endl;
+	// std::cout << "Select the next pokemon: " << std::endl;
 
 	std::vector<Pokemon> activePokemon;
 
 	for (auto& pokemon : playerPokemonList) {
-		std::cout << pokemon.getName();
+		// std::cout << pokemon.getName();
 
 		if (pokemon.getHp() > 0) {
-			std::cout << " [ACTIVE] HP: " << pokemon.getHp() << std::endl;
+			// std::cout << " [ACTIVE] HP: " << pokemon.getHp() << std::endl;
 			activePokemon.push_back(pokemon);
 		}
 		else {
-
-			std::cout << " [FAINTED] HP: " << pokemon.getHp() << std::endl;
+			// std::cout << " [FAINTED] HP: " << pokemon.getHp() << std::endl;
 		}
 	}
 
@@ -506,12 +506,13 @@ void handleSwap(std::ifstream& iFile, bool isSwapCommand) {
 			newPokemonFound = true;
 
 			if (isSwapCommand) {
-				std::cout << currentPlayerPokemon->getName() << ", switch out!\nCome back!" << std::endl;
+				std::cout << "[Turn " << turnCounter << "] " << currentPlayerPokemon->getName() << ", switch out!" <<std::endl;
+				std::cout << "[Turn " << turnCounter << "] " << "Come back!" << std::endl;
 			}
 
 			currentPlayerPokemon = &pokemon;
 
-			std::cout << "Go, " << switchedPokemon << "!" << std::endl;
+			std::cout << "[Turn " << turnCounter << "] " << "Go! " << switchedPokemon << "!" << std::endl;
 			isTurnFinished = true;
 			break;
 		}
@@ -528,24 +529,24 @@ void handleSwap(std::ifstream& iFile, bool isSwapCommand) {
 }
 
 void handleBag(std::ifstream& iFile) {
-	std::cout << "Select the items: " << std::endl;
+	// std::cout << "Select the items: " << std::endl;
 
 	std::vector<Item> availableItems;
 
 	for (auto& item : trainerList[0].getItem()) {
-		std::cout << "   " << item.getName();
+		// std::cout << "   " << item.getName();
 
 		if (!isTestMode) {
 			if (!item.getIsUsed()) {
-				std::cout << " [AVAILABLE]" << std::endl;
+				// std::cout << " [AVAILABLE]" << std::endl;
 				availableItems.push_back(item);
 			}
 			else {
-				std::cout << " [USED]" << std::endl;
+				// std::cout << " [USED]" << std::endl;
 			}
 		}
 		else {
-			std::cout << " [AVAILABLE]" << std::endl;
+			// std::cout << " [AVAILABLE]" << std::endl;
 			availableItems.push_back(item);
 		}
 
@@ -573,6 +574,7 @@ void handleBag(std::ifstream& iFile) {
 		isErrorCommand = true;
 	}
 	else {
+		/*
 		std::cout << "Please select pokemon target: " << std::endl;
 
 
@@ -587,6 +589,7 @@ void handleBag(std::ifstream& iFile) {
 				std::cout << " [FAINTED] HP: " << pokemon.getHp() << std::endl;
 			}
 		}
+		*/
 	}
 
 	std::string selectedPokemon = "";
@@ -610,7 +613,8 @@ void handleBag(std::ifstream& iFile) {
 
 			pokemon.setHp(newHp);
 
-			std::cout << selectedPokemon << " had its HP restored using " << selectedItemName << std::endl;
+			std::cout << "[Turn " << turnCounter << "] " << "You used a " << selectedItemName << "!" << std::endl;
+			std::cout << "[Turn " << turnCounter << "] " << selectedPokemon << " had its HP restored." << std::endl;
 		}
 		// add others item boost later
 	}
@@ -624,7 +628,7 @@ void handleBag(std::ifstream& iFile) {
 }
 
 void printStatus() {
-	std::cout << currentPlayerPokemon->getName() << " " << currentPlayerPokemon->getHp() << " ";
+	std::cout << "[Turn " << turnCounter << "] " << currentPlayerPokemon->getName() << " " << currentPlayerPokemon->getHp() << " ";
 
 	if (currentPlayerPokemon->getStatus() != "NONE") {
 		std::cout << currentPlayerPokemon->getStatus() << " ";
@@ -640,6 +644,8 @@ void printStatus() {
 }
 
 void printCheck() {
+	std::cout << "[Turn " << turnCounter << "] ";
+
 	for (auto& move : currentPlayerPokemon->getMoves()) {
 		std::cout << move.getName() << " " << move.getPowerPoint() << " ";
 	}
@@ -683,6 +689,17 @@ double getDamageCalculation(Pokemon& attacker, Move& usedMove, Pokemon& defender
 	double defenseValue = 0;
 	double criticalValue = 1.0;
 
+	if (attackPower > 0) {
+		if (damageMultiplier > 1.0) {
+			std::cout << "[Turn " << turnCounter << "] " << "It's super effective!" << std::endl;
+		}
+		else if (damageMultiplier < 1.0) {
+			std::cout << "[Turn " << turnCounter << "] " << "It's not very effective..." << std::endl;
+		}
+	}
+
+
+
 	std::string effect = usedMove.getEffect();
 
 	if (effect != "NONE") {
@@ -696,16 +713,16 @@ double getDamageCalculation(Pokemon& attacker, Move& usedMove, Pokemon& defender
 		}
 
 		if (effect == "PAR") {
-			status = "paralyzed, so it may be unable to move!";
+			status = " is paralyzed, so it may be unable to move!";
 		}
 		else if (effect == "BRN") {
-			status = "burned!";
+			status = " was burned!";
 		}
 		else if (effect == "PSN") {
-			status = "poisoned!";
+			status = " was poisoned!";
 		}
 
-		std::cout << turn << defender.getName() << " was " << status << std::endl;
+		std::cout << "[Turn " << turnCounter << "] " << turn << defender.getName() << status << std::endl;
 	}
 
 	if (usedMove.getAttackType() == "Physical") {
@@ -720,7 +737,7 @@ double getDamageCalculation(Pokemon& attacker, Move& usedMove, Pokemon& defender
 		usedMove.setPowerPoint(usedMove.getPowerPoint() - 1);
 		return -1.0;
 	}
-	
+
 	double step1 = (2.0 * 50.0) + 10.0;
 	double step2 = step1 / 250.0;
 	double step3 = step2 * attackPower;
@@ -741,13 +758,6 @@ double getDamageCalculation(Pokemon& attacker, Move& usedMove, Pokemon& defender
 	*/
 
 	// std::cout << "Final Damage Value: " << damageValue << std::endl;
-
-	if (damageMultiplier > 1.0) {
-		std::cout << "It's super effective!" << std::endl;
-	}
-	else if (damageMultiplier < 1.0) {
-		std::cout << "It's not very effective..." << std::endl;
-	}
 
 	return damageValue;
 }
@@ -830,7 +840,7 @@ void handleAttack(Pokemon& attacker, Move& usedMove, Pokemon& defender) {
 	}
 
 	if (1 + (rand() % 100) <= moveAccuracy) {
-		std::cout << attackerStatus << attacker.getName() << " used " << usedMove.getName() << "!" << std::endl;
+		std::cout << "[Turn " << turnCounter << "] " << attackerStatus << attacker.getName() << " used " << usedMove.getName() << "!" << std::endl;
 		damage = std::round(getDamageCalculation(attacker, usedMove, defender));
 
 		if (damage < 0) {
@@ -839,7 +849,7 @@ void handleAttack(Pokemon& attacker, Move& usedMove, Pokemon& defender) {
 
 		usedMove.setPowerPoint(usedMove.getPowerPoint() - 1);
 
-		std::cout << "\t" << attackerStatus << attacker.getName() << " dealt " << damage << " damage to " << defenderStatus << defender.getName() << std::endl;
+		// std::cout << "\t" << attackerStatus << attacker.getName() << " dealt " << damage << " damage to " << defenderStatus << defender.getName() << std::endl;
 
 		int newHealth = defender.getHp() - damage;
 
@@ -851,7 +861,7 @@ void handleAttack(Pokemon& attacker, Move& usedMove, Pokemon& defender) {
 		}
 	}
 	else {
-		std::cout << attackerStatus << attacker.getName() << "'s move is missed!" << std::endl;
+		std::cout << "[Turn " << turnCounter << "] " << attackerStatus << attacker.getName() << "'s move is missed!" << std::endl;
 	}
 }
 
@@ -860,7 +870,7 @@ void checkHandlePlayerFainted(std::ifstream& iFile) {
 		return;
 	}
 
-	std::cout << currentPlayerPokemon->getName() << " is fainted!" << std::endl;
+	std::cout << "[Turn " << turnCounter << "] " << currentPlayerPokemon->getName() << " fainted!" << std::endl;
 
 	if (checkGameEnded()) {
 		return;
@@ -874,21 +884,23 @@ void checkHandleEnemyFainted() {
 		return;
 	}
 
-	std::cout << "The opposing " << currentEnemyPokemon->getName() << " is fainted!" << std::endl;
+	std::cout << "[Turn " << turnCounter << "] " << "The opposing " << currentEnemyPokemon->getName() << " fainted!" << std::endl;
 
 	if (checkGameEnded()) {
 		return;
 	}
 
+	/*
 	for (auto& pokemon : enemyPokemonList) {
 		std::cout << "Enemy's pokemon: " << pokemon.getName() << " with HP " << pokemon.getHp() << std::endl;
 	}
+	*/
 
 	for (auto& pokemon : enemyPokemonList) {
 
 		if (pokemon.getHp() > 0) {
 			currentEnemyPokemon = &pokemon;
-			std::cout << "Enemy sends out " << pokemon.getName() << "!" << std::endl;
+			std::cout << "[Turn " << turnCounter << "] " << "Enemy sends out " << pokemon.getName() << "!" << std::endl;
 			isTurnFinished = true;
 			break;
 		}
@@ -898,7 +910,7 @@ void checkHandleEnemyFainted() {
 bool checkGameEnded() {
 	bool isAllFainted = true;
 
-	for (auto& pokemon : trainerList[0].getPokemon()) {
+	for (auto& pokemon : playerPokemonList) {
 		if (pokemon.getHp() > 0) {
 			isAllFainted = false;
 			break;
@@ -908,13 +920,14 @@ bool checkGameEnded() {
 	if (isAllFainted) {
 		isGameOver = true;
 		isPlayerWin = false;
-		std::cout << "You lose" << std::endl;
+		isTurnFinished = true;
+		std::cout << "[Turn " << turnCounter << "] " << "You lose" << std::endl;
 		return true;
 	}
 
 	isAllFainted = true;
 
-	for (auto& pokemon : trainerList[1].getPokemon()) {
+	for (auto& pokemon : enemyPokemonList) {
 		if (pokemon.getHp() > 0) {
 			isAllFainted = false;
 			break;
@@ -924,7 +937,8 @@ bool checkGameEnded() {
 	if (isAllFainted) {
 		isGameOver = true;
 		isPlayerWin = true;
-		std::cout << "You win" << std::endl;
+		isTurnFinished = true;
+		std::cout << "[Turn " << turnCounter << "] " << "You win" << std::endl;
 		return true;
 	}
 
@@ -938,10 +952,10 @@ void checkHandleConditional(std::ifstream& iFile) {
 		int damage = std::round((double)(0.0625 * currentPlayerPokemon->getMaxHp()));
 
 		if (conditional == "PSN") {
-			std::cout << currentPlayerPokemon->getName() << " is hurt by its poisoning!" << std::endl;
+			std::cout << "[Turn " << turnCounter << "] " << currentPlayerPokemon->getName() << " is hurt by its poisoning!" << std::endl;
 		}
 		else if (conditional == "BRN") {
-			std::cout << currentPlayerPokemon->getName() << " is hurt by its burn!" << std::endl;
+			std::cout << "[Turn " << turnCounter << "] " << currentPlayerPokemon->getName() << " is hurt by its burn!" << std::endl;
 		}
 
 		currentPlayerPokemon->setHp(currentPlayerPokemon->getHp() - damage);
@@ -955,10 +969,10 @@ void checkHandleConditional(std::ifstream& iFile) {
 		int damage = std::round((double)(0.0625 * currentEnemyPokemon->getMaxHp()));
 
 		if (conditional == "PSN") {
-			std::cout << "The opposing " << currentEnemyPokemon->getName() << " is hurt by its poisoning!" << std::endl;
+			std::cout << "[Turn " << turnCounter << "] " << "The opposing " << currentEnemyPokemon->getName() << " is hurt by its poisoning!" << std::endl;
 		}
 		else if (conditional == "BRN") {
-			std::cout << "The opposing " << currentEnemyPokemon->getName() << " is hurt by its burn!" << std::endl;
+			std::cout << "[Turn " << turnCounter << "] " << "The opposing " << currentEnemyPokemon->getName() << " is hurt by its burn!" << std::endl;
 		}
 
 		currentEnemyPokemon->setHp(currentEnemyPokemon->getHp() - damage);
@@ -971,9 +985,9 @@ bool checkHandleParalyzed(Pokemon attacker) {
 	if (attacker.getStatus() == "PAR") {
 		std::string turn = "";
 
-		if (isPlayerTurn) turn = "Opposing ";
+		if (!isPlayerTurn) turn = "Opposing ";
 
-		std::cout << turn << attacker.getName() << " is paralyzed!" << std::endl;
+		std::cout << "[Turn " << turnCounter << "] " << turn << attacker.getName() << " is paralyzed!" << std::endl;
 
 		int rate = 25;
 
@@ -982,10 +996,11 @@ bool checkHandleParalyzed(Pokemon attacker) {
 		}
 
 		if ((1 + rand() % 100) <= rate) {
-			std::cout << "It can't move!" << std::endl;
+			std::cout << "[Turn " << turnCounter << "] " << "It can't move!" << std::endl;
 			return true;
 		}
 	}
 
 	return false;
 }
+
