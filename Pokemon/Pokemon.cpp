@@ -24,11 +24,11 @@ Pokemon::Pokemon()
 	this->defense = 0;
 	this->spDefense = 0;
 	this->speed = 0;
-	this->status = "NONE";
+	this->status.clear();
 	this->moves.clear();
 }
 
-Pokemon::Pokemon(std::string name, std::vector <std::string> type, int hp, int attack, int spAttack, int defense, int spDefense, int speed, std::string status, std::vector<Move> moves)
+Pokemon::Pokemon(std::string name, std::vector <std::string> type, int hp, int attack, int spAttack, int defense, int spDefense, int speed, std::vector<std::string> status, std::vector<Move> moves)
 {
 	this->name = name;
 	this->type = type;
@@ -54,7 +54,7 @@ Pokemon::Pokemon(std::string name, std::vector <std::string> type, int hp, int a
 	this->defense = defense;
 	this->spDefense = spDefense;
 	this->speed = speed;
-	this->status = "NONE";
+	this->status.clear();
 	this->moves.clear();
 }
 
@@ -98,7 +98,7 @@ void Pokemon::setSpeed(int speed)
 	this->speed = speed;
 }
 
-void Pokemon::setStatus(std::string status)
+void Pokemon::setStatus(std::vector<std::string> status)
 {
 	this->status = status;
 }
@@ -148,7 +148,7 @@ int Pokemon::getSpeed()
 	return this->speed;
 }
 
-std::string Pokemon::getStatus()
+std::vector<std::string> Pokemon::getStatus()
 {
 	return this->status;
 }

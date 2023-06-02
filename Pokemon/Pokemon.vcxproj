@@ -142,7 +142,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Item.h" />
-    <ClInclude Include="main.h" />
     <ClInclude Include="Move.h" />
     <ClInclude Include="Pokemon.h" />
     <ClInclude Include="Trainer.h" />

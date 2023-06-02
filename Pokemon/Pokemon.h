@@ -27,12 +27,12 @@ private:
 	int defense;
 	int spDefense;
 	int speed;
-	std::string status;
+	std::vector<std::string> status;
 	std::vector <Move> moves;
 
 public:
 	Pokemon();
-	Pokemon(std::string, std::vector <std::string>, int, int, int, int, int, int, std::string, std::vector<Move>);
+	Pokemon(std::string, std::vector <std::string>, int, int, int, int, int, int, std::vector<std::string>, std::vector<Move>);
 	Pokemon(std::string, std::vector <std::string>, int, int, int, int, int, int);
 
 	void setName(std::string);
@@ -43,7 +43,7 @@ public:
 	void setDefense(int);
 	void setSpDefense(int);
 	void setSpeed(int);
-	void setStatus(std::string);
+	void setStatus(std::vector<std::string>);
 	void setMoves(std::vector<Move>);
 
 	std::string getName();
@@ -55,7 +55,7 @@ public:
 	int getSpDefense();
 	int getSpeed();
 	int getMaxHp();
-	std::string getStatus();
+	std::vector<std::string> getStatus();
 	std::vector <Move>& getMoves();
 
 	//Pokemon& operator= (const Pokemon&);
